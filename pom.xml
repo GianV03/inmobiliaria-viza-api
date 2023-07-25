@@ -96,4 +96,24 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>disable-jar-task</id>
+			<activation>
+				<!-- Aquí puedes definir una condición para activar el perfil, si es necesario -->
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
