@@ -47,7 +47,11 @@ public class EstateController {
             @RequestParam(required = false) String district,
             @RequestParam(required = false) String modality
     ){
-        return ResponseEntity.ok().body(estateService.findByFilters(title, department, province, district, modality));
+        try{
+            return ResponseEntity.ok().body(estateService.findByFilters(title, department, province, district, modality));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
 }

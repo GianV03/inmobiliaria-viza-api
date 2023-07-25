@@ -79,7 +79,6 @@ public class EstateService {
 
         var result = em.createQuery(cq);
         var resultCont = em.createQuery(cqCount);
-        System.out.println("hasta acá todo bien");
         // result = result.setFirstResult(page);
         //result = result.setMaxResults(size);
         Long all = resultCont.getSingleResult();
