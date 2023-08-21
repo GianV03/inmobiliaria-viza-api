@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -86,6 +87,32 @@ public class EstateService {
         var resultListDTO = resultList.stream().map(estate -> modelMapper.map(estate, EstateGetDTO.class))
                 .collect(Collectors.toList());
         return new ArrayList<>(resultListDTO);
+    }
+
+    public EstateGetDTO createEstate(EstateEntity estate){
+
+        EstateEntity creationEstate = new EstateEntity();
+
+        creationEstate.setTitle(estate.getTitle());
+        creationEstate.setDescription(estate.getDescription());
+        creationEstate.setLocation(estate.getLocation());
+        creationEstate.setPrice(estate.getPrice());
+        creationEstate.setBedrooms(estate.getBedrooms());
+        creationEstate.setBathrooms(estate.getBathrooms());
+        creationEstate.setArea(estate.getArea());
+        creationEstate.setUser(estate.getUser());
+        creationEstate.setModality(estate.getModality());
+
+        creationEstate.setDepartment(estate.getDepartment());
+        creationEstate.setProvince(estate.getProvince());
+        creationEstate.setDistrict(estate.getDistrict());
+        creationEstate.setCreationUser(estate.getCreationUser());
+        creationEstate.setCreationDate(LocalDateTime.now());
+
+        EstateEntity response = estateRepository.save(creationEstate);
+
+        return modelMapper.map(response, EstateGetDTO.class);
+
     }
 }
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -61,8 +62,8 @@ public class EstateEntity {
     @Column(name="update_user")
     private UUID updateUser;
     @Column(name="creation_date")
-    private Date creationDate;
+    private LocalDateTime creationDate;
     @Column(name="update_date")
-    private Date updateDate;
+    private LocalDateTime updateDate;
 
 }
