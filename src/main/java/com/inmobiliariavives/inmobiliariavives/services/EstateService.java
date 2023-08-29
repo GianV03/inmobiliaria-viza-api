@@ -1,8 +1,13 @@
 package com.inmobiliariavives.inmobiliariavives.services;
 
 import com.inmobiliariavives.inmobiliariavives.dto.EstateGetDTO;
+import com.inmobiliariavives.inmobiliariavives.dto.EstatePostDTO;
 import com.inmobiliariavives.inmobiliariavives.models.EstateEntity;
+import com.inmobiliariavives.inmobiliariavives.models.MasterEntity;
+import com.inmobiliariavives.inmobiliariavives.models.UserEntity;
 import com.inmobiliariavives.inmobiliariavives.repositories.EstateRepository;
+import com.inmobiliariavives.inmobiliariavives.repositories.MasterRepository;
+import com.inmobiliariavives.inmobiliariavives.repositories.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.Predicate;
@@ -10,7 +15,14 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +33,8 @@ import java.util.stream.Collectors;
 @Service
 public class EstateService {
 
+    private String filesRoute ="C:/estate/images/";
+
     @Autowired
     public EstateRepository estateRepository;
 
@@ -28,7 +42,14 @@ public class EstateService {
     private EntityManager em;
 
     @Autowired
+    private MasterRepository masterRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
+
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<EstateGetDTO> findAll(){
         var estateList = this.estateRepository.findAll();
@@ -89,7 +110,7 @@ public class EstateService {
         return new ArrayList<>(resultListDTO);
     }
 
-    public EstateGetDTO createEstate(EstateEntity estate){
+    public EstateGetDTO createEstate(EstatePostDTO estate, List<MultipartFile> images){
 
         EstateEntity creationEstate = new EstateEntity();
 
@@ -100,16 +121,35 @@ public class EstateService {
         creationEstate.setBedrooms(estate.getBedrooms());
         creationEstate.setBathrooms(estate.getBathrooms());
         creationEstate.setArea(estate.getArea());
-        creationEstate.setUser(estate.getUser());
-        creationEstate.setModality(estate.getModality());
+        UserEntity user = userRepository.findById(estate.getUserId()).orElse(null);
+        creationEstate.setUser(user);
+        MasterEntity modality = masterRepository.findById(estate.getModalityId()).orElse(null);
+        creationEstate.setModality(modality);
 
         creationEstate.setDepartment(estate.getDepartment());
         creationEstate.setProvince(estate.getProvince());
         creationEstate.setDistrict(estate.getDistrict());
+        creationEstate.setImages(estate.getImages());
         creationEstate.setCreationUser(estate.getCreationUser());
         creationEstate.setCreationDate(LocalDateTime.now());
 
         EstateEntity response = estateRepository.save(creationEstate);
+
+        File directory = new File(filesRoute +creationEstate.getId());
+        if(!directory.exists()){
+            directory.mkdirs();
+        }
+
+        for(MultipartFile image: images){
+
+            String imageName = image.getOriginalFilename();
+            Path imagesPath = Paths.get(filesRoute+creationEstate.getId(), imageName);
+            try{
+                Files.copy(image.getInputStream(),imagesPath, StandardCopyOption.REPLACE_EXISTING);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
 
         return modelMapper.map(response, EstateGetDTO.class);
 
