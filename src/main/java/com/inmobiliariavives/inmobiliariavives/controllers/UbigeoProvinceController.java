@@ -38,7 +38,7 @@ public class UbigeoProvinceController {
     }
 
     @GetMapping("/by-department/{department}")
-    public ResponseEntity<List<UbigeoProvinceEntity>> findByDepartment(@PathVariable String department){
+    public ResponseEntity<List<UbigeoProvinceEntity>> findByDepartment(@PathVariable(required = false) String department){
         try{
             List<UbigeoProvinceEntity> provinces = ubigeoProvinceService.findByDepartment(department);
             return ResponseEntity.ok().body(provinces);
