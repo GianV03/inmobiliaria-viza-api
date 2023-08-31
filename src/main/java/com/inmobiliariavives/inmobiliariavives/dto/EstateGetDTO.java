@@ -24,6 +24,7 @@ public class EstateGetDTO {
     private Integer area;
     private UUID userId;
     private String modalityName;
+    private UUID modalityId;
     private String imageSource;
     private String images;
     private String department;
