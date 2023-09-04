@@ -2,6 +2,7 @@ package com.inmobiliariavives.inmobiliariavives.services;
 
 import com.inmobiliariavives.inmobiliariavives.dto.EstateGetDTO;
 import com.inmobiliariavives.inmobiliariavives.dto.EstatePostDTO;
+import com.inmobiliariavives.inmobiliariavives.dto.EstateUpdatePostDTO;
 import com.inmobiliariavives.inmobiliariavives.models.EstateEntity;
 import com.inmobiliariavives.inmobiliariavives.models.MasterEntity;
 import com.inmobiliariavives.inmobiliariavives.models.UserEntity;
@@ -153,6 +154,30 @@ public class EstateService {
 
         return modelMapper.map(response, EstateGetDTO.class);
 
+    }
+
+    public EstateGetDTO updateEstate(EstateUpdatePostDTO estate, List<MultipartFile> images){
+        EstateEntity estateToUpdate = estateRepository.findById(estate.getId()).get();
+
+        estateToUpdate.setTitle(estate.getTitle());
+        estateToUpdate.setDescription(estate.getDescription());
+        estateToUpdate.setLocation(estate.getLocation());
+        estateToUpdate.setPrice(estate.getPrice());
+        estateToUpdate.setBedrooms(estate.getBedrooms());
+        estateToUpdate.setBathrooms(estate.getBathrooms());
+        estateToUpdate.setArea(estate.getArea());
+        UserEntity user = userRepository.findById(estate.getUserId()).orElse(null);
+        estateToUpdate.setUser(user);
+        MasterEntity modality = masterRepository.findById(estate.getModalityId()).orElse(null);
+        estateToUpdate.setModality(modality);
+        estateToUpdate.setDepartment(estate.getDepartment());
+        estateToUpdate.setProvince(estate.getProvince());
+        estateToUpdate.setDistrict(estate.getDistrict());
+        //estateToUpdate.setImages(estate.getImages());
+
+        EstateEntity response = estateRepository.save(estateToUpdate);
+
+        return modelMapper.map(response, EstateGetDTO.class);
     }
 }
 

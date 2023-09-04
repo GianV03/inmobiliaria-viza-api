@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.inmobiliariavives.inmobiliariavives.dto.EstateGetDTO;
 import com.inmobiliariavives.inmobiliariavives.dto.EstatePostDTO;
+import com.inmobiliariavives.inmobiliariavives.dto.EstateUpdatePostDTO;
 import com.inmobiliariavives.inmobiliariavives.models.EstateEntity;
 import com.inmobiliariavives.inmobiliariavives.services.EstateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,21 @@ public class EstateController {
         try{
             EstatePostDTO estate = new Gson().fromJson(jsonEstate, EstatePostDTO.class);
             return ResponseEntity.ok().body(estateService.createEstate(estate, images));
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity<EstateGetDTO> updateEstate(
+            @RequestParam String jsonEstate,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ){
+        try{
+            EstateUpdatePostDTO estate = new Gson().fromJson(jsonEstate, EstateUpdatePostDTO.class);
+            EstateGetDTO response = estateService.updateEstate(estate, images);
+            return ResponseEntity.ok().body(response);
         }catch(Exception e){
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
