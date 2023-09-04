@@ -1,6 +1,5 @@
 package com.inmobiliariavives.inmobiliariavives.dto;
 
-import com.inmobiliariavives.inmobiliariavives.models.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,5 +23,4 @@ public class EstatePostDTO {
     private String province;
     private String district;
     private UUID creationUser;
-
 }
