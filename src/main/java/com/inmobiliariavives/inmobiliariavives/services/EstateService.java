@@ -11,6 +11,7 @@ import com.inmobiliariavives.inmobiliariavives.repositories.MasterRepository;
 import com.inmobiliariavives.inmobiliariavives.repositories.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -53,7 +54,7 @@ public class EstateService {
     private UserRepository userRepository;
 
     public List<EstateGetDTO> findAll(){
-        var estateList = this.estateRepository.findAll();
+        var estateList = this.estateRepository.findByState(1);
         return estateList.stream().map(estate -> modelMapper.map(estate, EstateGetDTO.class)).collect(Collectors.toList());
     }
 
@@ -62,7 +63,7 @@ public class EstateService {
 
     }
 
-    public List<EstateGetDTO> findByFilters(String title, String department, String province, String district, String modality){
+    public List<EstateGetDTO> findByFilters(String title, String department, String province, String district, String modality, String user){
         var cb = em.getCriteriaBuilder();
         var cq = cb.createQuery(EstateEntity.class);
         var root =cq.from(EstateEntity.class);
@@ -91,6 +92,12 @@ public class EstateService {
 
         if (district != null) {
             predicates.add(cb.like(root.get("district"), district));
+        }
+
+        if (user != null){
+            Expression<String> lowerName1 = cb.lower(root.get("user").get("person").get("name"));
+            Expression<String> lowerName2 = cb.lower(cb.literal("%" +user+ "%"));
+            predicates.add(cb.like(lowerName1, lowerName2 ));
         }
 
         predicatesArray = predicates.toArray(new Predicate[0]);
@@ -133,6 +140,7 @@ public class EstateService {
         creationEstate.setImages(estate.getImages());
         creationEstate.setCreationUser(estate.getCreationUser());
         creationEstate.setCreationDate(LocalDateTime.now());
+        creationEstate.setState(1);
 
         EstateEntity response = estateRepository.save(creationEstate);
 
@@ -177,6 +185,13 @@ public class EstateService {
 
         EstateEntity response = estateRepository.save(estateToUpdate);
 
+        return modelMapper.map(response, EstateGetDTO.class);
+    }
+
+    public EstateGetDTO hideEstate(String id){
+        EstateEntity estate = estateRepository.findById(UUID.fromString(id)).get();
+        estate.setState(0);
+        EstateEntity response = estateRepository.save(estate);
         return modelMapper.map(response, EstateGetDTO.class);
     }
 }

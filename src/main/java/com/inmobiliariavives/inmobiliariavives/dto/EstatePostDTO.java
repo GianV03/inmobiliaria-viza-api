@@ -23,4 +23,5 @@ public class EstatePostDTO {
     private String province;
     private String district;
     private UUID creationUser;
+    private Integer state;
 }

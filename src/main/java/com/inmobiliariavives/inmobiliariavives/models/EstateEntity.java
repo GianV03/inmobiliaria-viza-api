@@ -65,5 +65,6 @@ public class EstateEntity {
     private LocalDateTime creationDate;
     @Column(name="update_date")
     private LocalDateTime updateDate;
-
+    @Column(name="state")
+    private Integer state;
 }

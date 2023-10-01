@@ -8,6 +8,7 @@ import com.inmobiliariavives.inmobiliariavives.dto.EstateUpdatePostDTO;
 import com.inmobiliariavives.inmobiliariavives.models.EstateEntity;
 import com.inmobiliariavives.inmobiliariavives.services.EstateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,10 +48,12 @@ public class EstateController {
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String province,
             @RequestParam(required = false) String district,
-            @RequestParam(required = false) String modality
+            @RequestParam(required = false) String modality,
+            @RequestParam(required = false) String user
     ){
         try{
-            return ResponseEntity.ok().body(estateService.findByFilters(title, department, province, district, modality));
+
+            return ResponseEntity.ok().body(estateService.findByFilters(title, department, province, district, modality, user));
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -83,6 +86,18 @@ public class EstateController {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+
+    @PutMapping("/hide/{id}")
+    public ResponseEntity<EstateGetDTO> hideEstate(
+            @PathVariable String id
+    ){
+       try{
+           EstateGetDTO response = estateService.hideEstate(id);
+           return ResponseEntity.ok().body(response);
+       }catch(Exception e){
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+       }
     }
 
 }

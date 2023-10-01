@@ -30,5 +30,5 @@ public class EstateGetDTO {
     private String department;
     private String province;
     private String district;
-
+    private Integer state;
 }
