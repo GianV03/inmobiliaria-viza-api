@@ -4,6 +4,7 @@ import com.inmobiliariavives.inmobiliariavives.models.UbigeoDepartmentEntity;
 import com.inmobiliariavives.inmobiliariavives.models.UbigeoDistrictEntity;
 import com.inmobiliariavives.inmobiliariavives.models.UbigeoEntity;
 import com.inmobiliariavives.inmobiliariavives.models.UbigeoProvinceEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
@@ -30,5 +31,7 @@ public class EstateGetDTO {
     private String department;
     private String province;
     private String district;
+    private Double estateLng;
+    private Double estateLat;
     private Integer state;
 }

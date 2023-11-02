@@ -181,7 +181,7 @@ public class EstateService {
         estateToUpdate.setDepartment(estate.getDepartment());
         estateToUpdate.setProvince(estate.getProvince());
         estateToUpdate.setDistrict(estate.getDistrict());
-        //estateToUpdate.setImages(estate.getImages());
+        estateToUpdate.setImages(estate.getImages());
 
         EstateEntity response = estateRepository.save(estateToUpdate);
 

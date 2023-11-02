@@ -41,30 +41,48 @@ public class EstateEntity {
 
     @Column(name="estate_area")
     private Integer area;
+
     @ManyToOne
     @JoinColumn(name="estate_user", referencedColumnName = "id_user")
     private UserEntity user;
+
     @ManyToOne
     @JoinColumn(name="estate_modality", referencedColumnName = "id")
     private MasterEntity modality;
+
     @Column(name="estate_image_source")
     private String imageSource;
+
     @Column(name="estate_images")
     private String images;
+
     @Column(name="ubigeo_department")
     private String department;
+
     @Column(name="ubigeo_province")
     private String province;
+
     @Column(name="ubigeo_district")
     private String district;
+
+    @Column(name="estate_lng")
+    private Double estateLng;
+
+    @Column(name="estate_lat")
+    private Double estateLat;
+
     @Column(name="creation_user")
     private UUID creationUser;
+
     @Column(name="update_user")
     private UUID updateUser;
+
     @Column(name="creation_date")
     private LocalDateTime creationDate;
+
     @Column(name="update_date")
     private LocalDateTime updateDate;
+
     @Column(name="state")
     private Integer state;
 }
