@@ -79,7 +79,7 @@ public class EstateService {
         }
 
         if (modality != null) {
-            predicates.add(cb.like(root.get("modality").get("name"), "%"+modality.toLowerCase()+"%"));
+            predicates.add(cb.equal(root.get("modality").get("id"), UUID.fromString(modality)));
         }
 
         if(department != null){

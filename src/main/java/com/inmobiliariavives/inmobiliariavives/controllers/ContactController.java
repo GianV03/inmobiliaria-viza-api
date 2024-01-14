@@ -34,6 +34,7 @@ public class ContactController {
             ContactGetDTO response = contactService.saveContact(contact);
             return ResponseEntity.ok().body(response);
         }catch (Exception e){
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
