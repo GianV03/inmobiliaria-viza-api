@@ -29,7 +29,7 @@ public class InmobiliariaVivesApplication {
 		return new ModelMapper();
 	}
 
-	@Bean
+	/*@Bean
 	public WebMvcConfigurer corsConfigurer() {
 
 		return new WebMvcConfigurer() {
@@ -40,6 +40,6 @@ public class InmobiliariaVivesApplication {
 						.allowedHeaders("*");
 			}
 		};
-	}
+	}*/
 
 }
