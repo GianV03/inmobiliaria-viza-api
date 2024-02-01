@@ -21,6 +21,11 @@ import java.util.UUID;
 @RequestMapping("/estate")
 public class EstateController {
 
+    @GetMapping("/obtener-origin")
+    public String obtenerOrigin(@RequestHeader(value = "Origin", defaultValue = "no se encontró") String origin) {
+        return "Origin enviado por el navegador: " + origin;
+    }
+
     @Autowired
     private EstateService estateService;
 
