@@ -38,4 +38,5 @@ public class MasterEntity {
 
     @Column(name="update_date")
     private LocalDateTime updateDate;
+
 }

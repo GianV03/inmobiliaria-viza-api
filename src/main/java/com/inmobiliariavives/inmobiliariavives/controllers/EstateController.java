@@ -55,6 +55,7 @@ public class EstateController {
 
             return ResponseEntity.ok().body(estateService.findByFilters(title, department, province, district, modality, user));
         }catch(Exception e){
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }

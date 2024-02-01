@@ -28,6 +28,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -59,64 +60,65 @@ public class EstateService {
     }
 
     public EstateGetDTO findById(UUID id){
-        return modelMapper.map(this.estateRepository.findById(id).get(), EstateGetDTO.class);
+        Optional<EstateEntity> optionalEstateEntity = this.estateRepository.findById(id);
+
+        return optionalEstateEntity.map(estate -> modelMapper.map(estate, EstateGetDTO.class)).orElse(null);
 
     }
 
     public List<EstateGetDTO> findByFilters(String title, String department, String province, String district, String modality, String user){
-        var cb = em.getCriteriaBuilder();
-        var cq = cb.createQuery(EstateEntity.class);
-        var root =cq.from(EstateEntity.class);
-        var cqCount = cb.createQuery(Long.class);
-        var rootCont = cqCount.from(EstateEntity.class);
+            var cb = em.getCriteriaBuilder();
+            var cq = cb.createQuery(EstateEntity.class);
+            var root =cq.from(EstateEntity.class);
+            var cqCount = cb.createQuery(Long.class);
+            var rootCont = cqCount.from(EstateEntity.class);
 
-        cqCount.select(cb.count(rootCont));
-        Predicate[] predicatesArray;
-        var predicates = new ArrayList<Predicate>();
+            cqCount.select(cb.count(rootCont));
+            Predicate[] predicatesArray;
+            var predicates = new ArrayList<Predicate>();
 
-        if (title != null) {
-            predicates.add(cb.like(root.get("title"), "%"+title.toUpperCase()+"%"));
+            if (title != null) {
+                predicates.add(cb.like(root.get("title"), "%"+title.toUpperCase()+"%"));
+            }
+
+            if (modality != null) {
+                predicates.add(cb.equal(root.get("modality").get("id"), UUID.fromString(modality)));
+            }
+
+            if(department != null){
+                predicates.add(cb.like(root.get("department"), department));
+            }
+
+            if(province != null){
+                predicates.add(cb.like(root.get("province"), province));
+            }
+
+            if (district != null) {
+                predicates.add(cb.like(root.get("district"), district));
+            }
+
+            if (user != null){
+                Expression<String> lowerName1 = cb.lower(root.get("user").get("person").get("name"));
+                Expression<String> lowerName2 = cb.lower(cb.literal("%" +user+ "%"));
+                predicates.add(cb.like(lowerName1, lowerName2 ));
+            }
+
+            predicatesArray = predicates.toArray(new Predicate[0]);
+            if (!predicates.isEmpty()) {
+                cq.where(predicatesArray);
+
+            }
+            cq.select(root).distinct(true);
+
+            var result = em.createQuery(cq);
+            var resultCont = em.createQuery(cqCount);
+            Long all = resultCont.getSingleResult();
+            var resultList = result.getResultList();
+            var resultListDTO = resultList.stream().map(estate -> modelMapper.map(estate, EstateGetDTO.class))
+                    .collect(Collectors.toList());
+            return new ArrayList<>(resultListDTO);
         }
 
-        if (modality != null) {
-            predicates.add(cb.equal(root.get("modality").get("id"), UUID.fromString(modality)));
-        }
-
-        if(department != null){
-            predicates.add(cb.like(root.get("department"), department));
-        }
-
-        if(province != null){
-            predicates.add(cb.like(root.get("province"), province));
-        }
-
-        if (district != null) {
-            predicates.add(cb.like(root.get("district"), district));
-        }
-
-        if (user != null){
-            Expression<String> lowerName1 = cb.lower(root.get("user").get("person").get("name"));
-            Expression<String> lowerName2 = cb.lower(cb.literal("%" +user+ "%"));
-            predicates.add(cb.like(lowerName1, lowerName2 ));
-        }
-
-        predicatesArray = predicates.toArray(new Predicate[0]);
-        if (!predicates.isEmpty()) {
-            cq.where(predicatesArray);
-
-        }
-        cq.select(root).distinct(true);
-
-        var result = em.createQuery(cq);
-        var resultCont = em.createQuery(cqCount);
-        // result = result.setFirstResult(page);
-        //result = result.setMaxResults(size);
-        Long all = resultCont.getSingleResult();
-        var resultList = result.getResultList();
-        var resultListDTO = resultList.stream().map(estate -> modelMapper.map(estate, EstateGetDTO.class))
-                .collect(Collectors.toList());
-        return new ArrayList<>(resultListDTO);
-    }
 
     public EstateGetDTO createEstate(EstatePostDTO estate, List<MultipartFile> images){
 
@@ -193,6 +195,15 @@ public class EstateService {
         estate.setState(0);
         EstateEntity response = estateRepository.save(estate);
         return modelMapper.map(response, EstateGetDTO.class);
+    }
+
+    private boolean isValidUUID(String uuid) {
+        try {
+            UUID.fromString(uuid);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }
 
