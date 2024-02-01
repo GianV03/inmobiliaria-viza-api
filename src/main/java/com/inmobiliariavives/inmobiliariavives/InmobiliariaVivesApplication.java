@@ -29,17 +29,17 @@ public class InmobiliariaVivesApplication {
 		return new ModelMapper();
 	}
 
-	/*@Bean
+	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("https://vizainmobiliaria.com")
+				registry.addMapping("/**").allowedOrigins("*")
 						.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
 						.allowedHeaders("*");;
 			}
 		};
-	}*/
+	}
 
 }
