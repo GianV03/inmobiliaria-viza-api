@@ -29,16 +29,4 @@ public class InmobiliariaVivesApplication {
 		return new ModelMapper();
 	}
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("https://vizainmobiliaria.com")
-						.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
-						.allowedHeaders("*");;
-			}
-		};
-	}
-
 }
