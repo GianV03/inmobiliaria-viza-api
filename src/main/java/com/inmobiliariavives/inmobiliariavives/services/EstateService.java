@@ -78,7 +78,7 @@ public class EstateService {
             var predicates = new ArrayList<Predicate>();
 
             if (title != null) {
-                predicates.add(cb.like(root.get("title"), "%"+title.toUpperCase()+"%"));
+                predicates.add(cb.like(cb.upper(root.get("title")), "%" + title.toUpperCase() + "%"));
             }
 
             if (modality != null) {
