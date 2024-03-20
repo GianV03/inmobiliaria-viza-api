@@ -7,8 +7,14 @@ import com.inmobiliariavives.inmobiliariavives.dto.EstatePostDTO;
 import com.inmobiliariavives.inmobiliariavives.dto.EstateUpdatePostDTO;
 import com.inmobiliariavives.inmobiliariavives.models.EstateEntity;
 import com.inmobiliariavives.inmobiliariavives.services.EstateService;
+import com.inmobiliariavives.inmobiliariavives.utils.PaginatedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,18 +54,21 @@ public class EstateController {
     }
 
     @GetMapping("/by-filters")
-    public ResponseEntity<List<EstateGetDTO>> findByFilters(
+    public ResponseEntity<PaginatedResponse<EstateGetDTO>> findByFilters(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String province,
             @RequestParam(required = false) String district,
             @RequestParam(required = false) String modality,
-            @RequestParam(required = false) String user
+            @RequestParam(required = false) String user,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int pageSize
+
     ){
         try{
-
-            return ResponseEntity.ok().body(estateService.findByFilters(title, department, province, district, modality, user));
-        }catch(Exception e){
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return ResponseEntity.ok().body(estateService.findByFilters(title, department, province, district, modality, user, pageable));
+        } catch(Exception e){
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

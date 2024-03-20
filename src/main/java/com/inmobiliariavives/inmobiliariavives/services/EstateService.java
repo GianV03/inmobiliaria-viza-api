@@ -9,6 +9,7 @@ import com.inmobiliariavives.inmobiliariavives.models.UserEntity;
 import com.inmobiliariavives.inmobiliariavives.repositories.EstateRepository;
 import com.inmobiliariavives.inmobiliariavives.repositories.MasterRepository;
 import com.inmobiliariavives.inmobiliariavives.repositories.UserRepository;
+import com.inmobiliariavives.inmobiliariavives.utils.PaginatedResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.Expression;
@@ -16,6 +17,10 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -66,7 +71,7 @@ public class EstateService {
 
     }
 
-    public List<EstateGetDTO> findByFilters(String title, String department, String province, String district, String modality, String user){
+    public PaginatedResponse<EstateGetDTO> findByFilters(String title, String department, String province, String district, String modality, String user, Pageable pageable){
             var cb = em.getCriteriaBuilder();
             var cq = cb.createQuery(EstateEntity.class);
             var root =cq.from(EstateEntity.class);
@@ -114,9 +119,19 @@ public class EstateService {
             var resultCont = em.createQuery(cqCount);
             Long all = resultCont.getSingleResult();
             var resultList = result.getResultList();
-            var resultListDTO = resultList.stream().map(estate -> modelMapper.map(estate, EstateGetDTO.class))
+            List<EstateGetDTO> resultListDTO = resultList.stream().map(estate -> modelMapper.map(estate, EstateGetDTO.class))
                     .collect(Collectors.toList());
-            return new ArrayList<>(resultListDTO);
+            int start = (int) pageable.getOffset();
+            int end = (start + pageable.getPageSize());
+            if(end == all){ end = end-1; }
+            List<EstateGetDTO> paginatedEntities = resultListDTO.subList(start, end);
+        // Crear la respuesta paginada
+            PaginatedResponse<EstateGetDTO> response = new PaginatedResponse<>();
+            response.setData(paginatedEntities);
+            response.setTotalElements(all);
+            response.setPage(pageable.getPageNumber());
+
+            return response;
         }
 
 
