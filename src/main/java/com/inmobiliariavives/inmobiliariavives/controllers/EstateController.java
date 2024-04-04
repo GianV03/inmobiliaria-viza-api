@@ -69,7 +69,6 @@ public class EstateController {
             Pageable pageable = PageRequest.of(page, pageSize);
             return ResponseEntity.ok().body(estateService.findByFilters(title, department, province, district, modality, user, pageable));
         } catch(Exception e){
-            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }

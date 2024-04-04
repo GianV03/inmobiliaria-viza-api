@@ -122,7 +122,7 @@ public class EstateService {
             List<EstateGetDTO> resultListDTO = resultList.stream().map(estate -> modelMapper.map(estate, EstateGetDTO.class))
                     .collect(Collectors.toList());
             int start = (int) pageable.getOffset();
-            int end = (start + pageable.getPageSize());
+            int end = Math.min((start + pageable.getPageSize()), resultListDTO.size());
             if(end == all){ end = end-1; }
             List<EstateGetDTO> paginatedEntities = resultListDTO.subList(start, end);
         // Crear la respuesta paginada
